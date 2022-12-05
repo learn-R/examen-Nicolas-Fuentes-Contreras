@@ -1,0 +1,162 @@
+---
+title: "Análisis"
+author: "Nicolás Fuentes Contreras"
+profesora: "Valentina Andrade de la Horra"
+Ayudante: "Dafne Jaime Vargas"
+date: "2022-12-05"
+output: 
+  html_document:
+    theme: "journal"
+---
+
+![](https://www.uahurtado.cl/wp-images/uploads/2017/03/logo_uah-220x220.jpg)
+
+#### Universidad Alberto Hurtado
+#### Carrera: Ciencia Política y Relaciones Internacionales 
+#### Profesora: Valentina Andrade de la Horra
+#### Ayudantes: Dafne Jaime Vargas
+#### Estudiante: Nicolás Fuentes Contreras
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Abstract:
+```{style="text-align: justify"}
+
+```
+##### Keywords: Democracia, representatividad, confianza, accountability  
+
+### Introducción:
+```{style="text-align: justify"}
+
+```
+
+### Análisis
+#### Primer apartado: carga de paquetes
+```{r Paquetes}
+
+pacman::p_load(tidyverse,
+               sjmisc,
+               srvyr,
+               survey,
+               forcats,
+               car,
+               haven,
+               dplyr, 
+               car,
+               sjmisc,
+               sjlabelled,
+               sjPlot)
+```
+
+#### Segundo apartado: carga de la base de datos
+```{r Datos}
+
+Datos_proc <- readRDS(file = "output/data/Datos_proc.rds")
+```
+
+#### Tercer apartado: creación de objeto encuesta 
+```{r objeto encuesta}
+
+objeto_encuesta <- Datos_proc %>% 
+  as_survey_design(ids = idencuesta, 
+                   weights = exp) 
+```
+
+#### Cuarto apartado: Análisis de regresión lineal
+```{style="text-align: justify"}
+
+Para efectos exclusivos de la investigación se optó por recodificar la variable *democracia* y las variables *confianza_gobierno*, *confianza_congreso*, *confianza_partidos* a partir de únicamente dos valores de respuesta. Mientras que, las variables restantes como *tramo_edad* se recodifico a partir de tramos etarios y la variable *sexo* a partir de las categorías Hombre y Mujer. De tal forma, 
+para la realización del análisis de regresión las variables seleccionadas se clasifican de la siguiente forma:
+
+Variables:
+1. Variable dependiente: democracia
+2. Variables independientes: confianza_gobierno + confianza_congreso + confianza_partidos + tramo_edad + sexo
+```
+
+#### *Modelo 1*
+##### Regresión lineal con variable de confianza en el gobierno 
+```{r Modelo 1}
+
+modelo_1 <- glm(democracia ~ confianza_gobierno, family = gaussian(link = "identity"),
+                data = Datos_proc)
+```
+##### Estimadores 
+```{r Estimadores}
+summary(modelo_1)
+```
+
+
+#### *Modelo 2*
+##### Regresión lineal con variable de confianza en el congreso
+```{r Modelo 2}
+
+modelo_2 <- glm(democracia ~ confianza_congreso, family = gaussian(link = "identity"),
+                data = Datos_proc)
+```
+##### Estimadores 
+```{r}
+summary(modelo_2)
+```
+Como un primer aceramiento tenemos que 
+
+#### *Modelo 3*
+##### Regresión lineal con variable de confianza en los partidos políticos 
+```{r Modelo 3}
+
+modelo_3 <- glm(democracia ~ confianza_partidos, family = gaussian(link = "identity"),
+                data = Datos_proc)
+```
+##### Estimadores 
+```{r}
+summary(modelo_3)
+```
+
+### Interpretación y comparación de los primeros 3 Modelos
+```{r Tabla}
+sjPlot::tab_model(modelo_1, modelo_2, modelo_3, 
+                  show.ci= F,
+                  show.p = F, 
+                  show.obs = T,
+                  title = "Modelo de regresión con los primero 3 Modelos",
+                  string.pred = "Predictores",
+                  string.est = "β",
+                  digits = 2, 
+                  p.style = c("stars"),
+                  dv.labels = c("Modelo 1", "Modelo 2", "Modelo 3"), 
+                  encoding = "UTF-8")
+```
+
+
+#### *Modelo 4*
+
+```{r Modelo 4}
+
+modelo_5 <- glm(democracia ~ confianza_gobierno + confianza_congreso + confianza_partidos,
+                family = gaussian(link = "identity"),
+                data = Datos_proc)
+```
+
+#### *Modelo 5*
+```{r Modelo 5}
+
+modelo_5 <- glm(democracia ~ confianza_gobierno + confianza_congreso + confianza_partidos +
+                sexo + tramo_edad,
+                family = gaussian(link = "identity"),
+         data = Datos_proc)
+```
+
+#### *Modelo 6*
+```{r Modelo 6}
+
+modelo_6_survey <- svyglm(democracia ~ confianza_gobierno + confianza_congreso +
+                        confianza_partidos + sexo + tramo_edad,
+                        family = gaussian(link = "identity"),
+                        design = objeto_encuesta,
+                        data = Datos_proc)
+```
+
+
+### Conclusiones:
+### Referencias:

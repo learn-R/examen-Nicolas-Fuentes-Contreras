@@ -74,3 +74,25 @@ Datos_proc <- elsoc_2021 %>%
   select(., tramo_edad, sexo, idencuesta, democracia, confianza_gobierno,
          confianza_partidos, confianza_congreso, ponderador = ponderador01, exp = fact_exp01)
 
+
+# 7.Conservar etiquetas de las variables procesadas   
+
+Datos_proc$sexo <- set_label(Datos_proc$sexo, 'Sexo de la persona entrevistada')
+Datos_proc$tramo_edad <- set_label(Datos_proc$tramo_edad, 'Edad de la persona entrevistada en tramos')
+Datos_proc$democracia <- set_label(Datos_proc$democracia, 'satisfacción con la democracia en Chile')
+Datos_proc$confianza_gobierno <- set_label(Datos_proc$confianza_gobierno, 'Grado de confianza: El gobierno')
+Datos_proc$confianza_partidos <- set_label(Datos_proc$confianza_partidos, 'Grado de confianza: Los partidos políticos') 
+Datos_proc$confianza_congreso <- set_label(Datos_proc$confianza_congreso, 'Grado de confianza: El Congreso Nacional') 
+str(Datos_proc)
+
+# 7.1 Visualizar nueva base 
+
+view(Datos_proc)
+
+# 8. Guardar
+
+save(file = "output/Datos_proc.RData") 
+saveRDS(Datos_proc, file= "output/Datos_proc.rds")
+
+
+
